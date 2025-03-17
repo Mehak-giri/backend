@@ -12,12 +12,17 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+# Vulnerable configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///learning.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'very-secret-key'  # Vulnerability: Hardcoded secret
+# Vulnerability: Unsanitized file uploads
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 db = SQLAlchemy(app)
+
+# Models
+# Add new model for course enrollment
 
 
 class Enrollment(db.Model):
@@ -27,6 +32,8 @@ class Enrollment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey(
         'course.id'), nullable=False)
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Vulnerability: No unique constraint on student_id and course_id
 
 
 class Grade(db.Model):
